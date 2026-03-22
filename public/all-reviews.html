@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Game Reviews</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --card-bg: #1e293b;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --card-border: #334155;
+            --input-bg: #334155;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .back-link {
+            position: absolute;
+            left: 2rem;
+            top: 2.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--accent-hover);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .review-list {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .review-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--card-border);
+            padding: 1.5rem;
+            border-radius: 12px;
+            position: relative;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .review-item:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .game-badge {
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: var(--accent-hover);
+            font-size: 1.1rem;
+        }
+
+        .review-rating {
+            color: #fbbf24;
+            letter-spacing: 2px;
+        }
+
+        .review-comment {
+            line-height: 1.6;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #94a3b8;
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        .delete-btn {
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.75rem;
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="back-link">← Back to Games</a>
+        <h1>All Community Reviews</h1>
+    </header>
+
+    <main>
+        <div class="section-card">
+            <h2>Recent Thoughts Across All Games</h2>
+            <div id="reviews-container" class="review-list">
+                <div class="empty-state">Loading reviews...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        fetch(`http://localhost:3000/reviews`)
+            .then(res => res.json())
+            .then(reviews => {
+                const container = document.getElementById('reviews-container');
+                container.innerHTML = "";
+
+                if (!reviews || reviews.length === 0) {
+                    container.innerHTML = "<div class='empty-state'>No reviews yet. Check out a game to be the first!</div>";
+                    return;
+                }
+
+                reviews.forEach(review => {
+                    let dateStr = "Unknown Date";
+                    if (review.created_at) {
+                        const dateObj = new Date(review.created_at.replace(' ', 'T'));
+                        if (!isNaN(dateObj)) dateStr = dateObj.toLocaleDateString();
+                    }
+                    
+                    const div = document.createElement("div");
+                    div.className = "review-item";
+                    
+                    div.innerHTML = `
+                        <div class="game-badge">${review.game_name || 'Unknown Game'}</div>
+                        <div class="review-header">
+                            <span class="review-author">${review.username}</span>
+                            <span>
+                                <span class="review-rating">${"⭐".repeat(review.rating)}</span>
+                                <span style="margin-left:8px; display:inline-block">${dateStr}</span>
+                            </span>
+                        </div>
+                        <p class="review-comment">${review.comment}</p>
+                        <button class="delete-btn" onclick="event.stopPropagation(); deleteReview(${review.id})">🗑 Delete</button>
+                    `;
+                    div.style.cursor = "pointer";
+                    div.onclick = () => window.location.href = `game.html?id=${review.game_id}`;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => {
+                console.error("Error loading all reviews:", err);
+                document.getElementById('reviews-container').innerHTML = "<div class='empty-state'>Failed to load reviews.</div>";
+            });
+
+        function deleteReview(reviewId) {
+            if (!confirm('Are you sure you want to delete this review?')) return;
+            fetch(`http://localhost:3000/reviews/${reviewId}`, { method: 'DELETE' })
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to delete');
+                    location.reload();
+                })
+                .catch(err => {
+                    console.error('Error deleting review:', err);
+                    alert('Failed to delete review.');
+                });
+        }
+    </script>
+</body>
+</html>

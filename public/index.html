@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Review Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --card-bg: #1e293b;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --card-border: #334155;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        #game-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .game-date {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .game-date::before {
+            content: '📅';
+            font-size: 0.8rem;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #94a3b8;
+            padding: 3rem;
+            grid-column: 1 / -1;
+        }
+
+        .error {
+            text-align: center;
+            color: #ef4444;
+            background: #7f1d1d20;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #7f1d1d;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Game Review Board</h1>
+        <div style="margin-top: 1rem;">
+            <a href="all-reviews.html" style="color: var(--text-color); background: rgba(59, 130, 246, 0.2); padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; border: 1px solid var(--accent);">View All Community Reviews ✨</a>
+        </div>
+    </header>
+
+    <main>
+        <ul id="game-list">
+            <div class="loading">Loading games...</div>
+        </ul>
+    </main>
+
+    <script>
+        fetch("http://localhost:3000/games")
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                const list = document.getElementById("game-list");
+                list.innerHTML = ''; // clear loading state
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<div class="loading">No games found.</div>';
+                    return;
+                }
+
+                data.forEach(game => {
+                    const li = document.createElement("li");
+                    li.className = "game-card";
+                    li.style.cursor = "pointer";
+                    li.onclick = () => window.location.href = `game.html?id=${game.id}`;
+
+                    const releaseDate = game.released ? new Date(game.released).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) : 'Unknown Release Date';
+
+                    li.innerHTML = `
+                        <h2 class="game-title">${game.name}</h2>
+                        <div class="game-date">${releaseDate}</div>
+                    `;
+                    list.appendChild(li);
+                });
+            })
+            .catch(err => {
+                console.error("Error:", err);
+                const list = document.getElementById("game-list");
+                list.innerHTML = `<div class="error">Failed to load games: ${err.message}</div>`;
+            });
+    </script>
+</body>
+
+</html>
