@@ -117,6 +117,47 @@
             font-size: 0.8rem;
         }
 
+        .search-container {
+            margin-top: 1.25rem;
+            position: relative;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+
+        .search-container input::placeholder {
+            color: #64748b;
+        }
+
+        .search-container input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
         .loading {
             text-align: center;
             font-size: 1.2rem;
@@ -134,12 +175,24 @@
             border: 1px solid #7f1d1d;
             grid-column: 1 / -1;
         }
+
+        .no-results {
+            text-align: center;
+            color: #94a3b8;
+            padding: 3rem;
+            grid-column: 1 / -1;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 
 <body>
     <header>
         <h1>Game Review Board</h1>
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Search for a game..." autocomplete="off">
+        </div>
         <div style="margin-top: 1rem;">
             <a href="all-reviews.html" style="color: var(--text-color); background: rgba(59, 130, 246, 0.2); padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; border: 1px solid var(--accent);">View All Community Reviews ✨</a>
         </div>
@@ -152,44 +205,63 @@
     </main>
 
     <script>
-        fetch("http://localhost:3000/games")
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                const list = document.getElementById("game-list");
-                list.innerHTML = ''; // clear loading state
+        const list = document.getElementById("game-list");
+        const searchInput = document.getElementById("search-input");
+        let debounceTimer;
 
-                if (!data || data.length === 0) {
-                    list.innerHTML = '<div class="loading">No games found.</div>';
-                    return;
-                }
+        function renderGames(games) {
+            list.innerHTML = '';
+            if (!games || games.length === 0) {
+                list.innerHTML = '<div class="no-results">No games found matching your search.</div>';
+                return;
+            }
+            games.forEach(game => {
+                const li = document.createElement("li");
+                li.className = "game-card";
+                li.style.cursor = "pointer";
+                li.onclick = () => window.location.href = `game.html?id=${game.id}`;
 
-                data.forEach(game => {
-                    const li = document.createElement("li");
-                    li.className = "game-card";
-                    li.style.cursor = "pointer";
-                    li.onclick = () => window.location.href = `game.html?id=${game.id}`;
+                const releaseDate = game.released ? new Date(game.released).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }) : 'Unknown Release Date';
 
-                    const releaseDate = game.released ? new Date(game.released).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    }) : 'Unknown Release Date';
-
-                    li.innerHTML = `
-                        <h2 class="game-title">${game.name}</h2>
-                        <div class="game-date">${releaseDate}</div>
-                    `;
-                    list.appendChild(li);
-                });
-            })
-            .catch(err => {
-                console.error("Error:", err);
-                const list = document.getElementById("game-list");
-                list.innerHTML = `<div class="error">Failed to load games: ${err.message}</div>`;
+                li.innerHTML = `
+                    <h2 class="game-title">${game.name}</h2>
+                    <div class="game-date">${releaseDate}</div>
+                `;
+                list.appendChild(li);
             });
+        }
+
+        function fetchGames(query) {
+            list.innerHTML = '<div class="loading">Loading games...</div>';
+            const url = query
+                ? `http://localhost:3000/games/search/${encodeURIComponent(query)}`
+                : "http://localhost:3000/games";
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => renderGames(data))
+                .catch(err => {
+                    console.error("Error:", err);
+                    list.innerHTML = `<div class="error">Failed to load games: ${err.message}</div>`;
+                });
+        }
+
+        searchInput.addEventListener("input", () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                fetchGames(searchInput.value.trim());
+            }, 300);
+        });
+
+        // Initial load
+        fetchGames();
     </script>
 </body>
 
