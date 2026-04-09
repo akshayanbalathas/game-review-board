@@ -5,7 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Review Board</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+
     <style>
         :root {
             --bg-color: #0f172a;
@@ -17,247 +25,301 @@
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
         }
 
-        header {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            padding: 2rem;
-            text-align: center;
-            border-bottom: 1px solid var(--card-border);
-            position: sticky;
-            top: 0;
-            z-index: 10;
+        /* Dark navbar */
+        .navbar {
+            background-color: #1e293b;
+        }
+        .navbar-item, .navbar-link, .navbar-burger {
+            color: var(--text-color) !important;
+        }
+        .navbar-item:hover {
+            background-color: #334155 !important;
+        }
+        .navbar-menu {
+            background-color: #1e293b;
+        }
+        .navbar-dropdown {
+            background-color: #1e293b;
+            border-top: 2px solid var(--accent);
         }
 
-        h1 {
-            margin: 0;
-            font-size: 2.5rem;
+        /* Hero gradient text */
+        .hero .title {
+            font-size: 3rem;
             font-weight: 800;
             background: linear-gradient(135deg, #60a5fa, #a78bfa);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
         }
-
-        main {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 1.5rem;
-        }
-
-        #game-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .game-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .game-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            border-color: var(--accent);
-        }
-
-        .game-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .game-card:hover::before {
-            opacity: 1;
-        }
-
-        .game-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 0;
-            color: var(--text-color);
-        }
-
-        .game-date {
-            font-size: 0.875rem;
+        .hero .subtitle {
             color: #94a3b8;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .game-date::before {
-            content: '📅';
-            font-size: 0.8rem;
-        }
-
-        .search-container {
-            margin-top: 1.25rem;
-            position: relative;
-            max-width: 480px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .search-container input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.75rem;
+        /* Search input styling */
+        .search-input {
+            background-color: #334155;
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            background: rgba(15, 23, 42, 0.6);
             color: var(--text-color);
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            box-sizing: border-box;
+            border-radius: 12px;
+            max-width: 500px;
         }
-
-        .search-container input::placeholder {
+        .search-input::placeholder {
             color: #64748b;
         }
-
-        .search-container input:focus {
+        .search-input:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
         }
 
-        .search-icon {
-            position: absolute;
-            left: 0.85rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #64748b;
-            font-size: 1rem;
-            pointer-events: none;
+        /* Game cards */
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
+            height: 100%;
         }
-
-        .loading {
-            text-align: center;
-            font-size: 1.2rem;
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+        .game-card .card-content {
+            padding: 1.5rem;
+        }
+        .game-card .game-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        .game-card .game-date {
+            font-size: 0.875rem;
             color: #94a3b8;
+        }
+
+        /* Loading and states */
+        .loading-state, .no-results, .error-state {
+            text-align: center;
             padding: 3rem;
-            grid-column: 1 / -1;
-        }
-
-        .error {
-            text-align: center;
-            color: #ef4444;
-            background: #7f1d1d20;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #7f1d1d;
-            grid-column: 1 / -1;
-        }
-
-        .no-results {
-            text-align: center;
             color: #94a3b8;
-            padding: 3rem;
-            grid-column: 1 / -1;
             font-size: 1.1rem;
+        }
+        .error-state {
+            color: #ef4444;
+        }
+
+        /* SVG Logo styling */
+        .logo-svg {
+            height: 40px;
+            margin-right: 8px;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <h1>Game Review Board</h1>
-        <div class="search-container">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Search for a game..." autocomplete="off">
-        </div>
-        <div style="margin-top: 1rem;">
-            <a href="all-reviews.html" style="color: var(--text-color); background: rgba(59, 130, 246, 0.2); padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; border: 1px solid var(--accent);">View All Community Reviews ✨</a>
-        </div>
-    </header>
+    <!-- Navbar -->
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="index.html">
+                <!-- SVG logo -->
+                <svg class="logo-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="36" height="36" rx="8" fill="#3b82f6"/>
+                    <text x="20" y="28" text-anchor="middle" fill="white" font-size="22" font-weight="bold">G</text>
+                </svg>
+                <span style="font-weight: 700; font-size: 1.2rem;">Game Review Board</span>
+            </a>
 
-    <main>
-        <ul id="game-list">
-            <div class="loading">Loading games...</div>
-        </ul>
-    </main>
+            <!-- Burger menu -->
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainNavbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
 
+        <div id="mainNavbar" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="index.html">
+                    <span class="icon"><i class="fas fa-home"></i></span>
+                    <span>Home</span>
+                </a>
+                <a class="navbar-item" href="all-reviews.html">
+                    <span class="icon"><i class="fas fa-comments"></i></span>
+                    <span>All Reviews</span>
+                </a>
+                <a class="navbar-item" href="stats.html">
+                    <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                    <span>Stats</span>
+                </a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-primary">
+                            <span class="icon"><i class="fas fa-user-plus"></i></span>
+                            <span>Sign Up</span>
+                        </a>
+                        <a class="button is-light">
+                            <span class="icon"><i class="fas fa-sign-in-alt"></i></span>
+                            <span>Log In</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero banner -->
+    <section class="hero is-medium" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding-top: 52px;">
+        <div class="hero-body has-text-centered">
+            <p class="title">
+                Game Review Board
+            </p>
+            <p class="subtitle">
+                Discover, review, and share your favorite games
+            </p>
+
+            <!-- Search bar -->
+            <div class="field has-text-centered" style="max-width: 500px; margin: 1.5rem auto 0;">
+                <div class="control has-icons-left">
+                    <input class="input is-medium search-input" type="text" id="search-input"
+                        placeholder="Search for a game..." autocomplete="off">
+                    <span class="icon is-left" style="color: #64748b;">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game list -->
+    <section class="section" style="background-color: var(--bg-color);">
+        <div class="container">
+            <!-- Game count -->
+            <div class="level mb-5">
+                <div class="level-left">
+                    <p id="game-count" class="has-text-grey-light"></p>
+                </div>
+            </div>
+
+            <!-- Games grid -->
+            <div id="game-list" class="columns is-multiline">
+                <div class="column is-12 loading-state">
+                    <span class="icon is-large"><i class="fas fa-spinner fa-spin fa-2x"></i></span>
+                    <p class="mt-3">Loading games...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" style="background-color: #1e293b; padding: 2rem;">
+        <div class="content has-text-centered">
+            <p style="color: #94a3b8;">
+                <strong style="color: var(--text-color);">Game Review Board</strong> — CSCI 3230 Group Project 2026.
+                Game data from <a href="https://rawg.io" style="color: var(--accent);">RAWG API</a>.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script>
-        const list = document.getElementById("game-list");
+        // Navbar burger toggle
+        $(document).ready(function () {
+            $(".navbar-burger").click(function () {
+                $(".navbar-burger").toggleClass("is-active");
+                $(".navbar-menu").toggleClass("is-active");
+            });
+        });
+
+        // Game list rendering
+        const gameList = document.getElementById("game-list");
         const searchInput = document.getElementById("search-input");
+        const gameCount = document.getElementById("game-count");
         let debounceTimer;
 
         function renderGames(games) {
-            list.innerHTML = '';
+            gameList.innerHTML = "";
+
             if (!games || games.length === 0) {
-                list.innerHTML = '<div class="no-results">No games found matching your search.</div>';
+                gameList.innerHTML = '<div class="column is-12 no-results">No games found matching your search.</div>';
+                gameCount.textContent = "";
                 return;
             }
+
+            gameCount.textContent = `Showing ${games.length} games`;
+
             games.forEach(game => {
-                const li = document.createElement("li");
-                li.className = "game-card";
-                li.style.cursor = "pointer";
-                li.onclick = () => window.location.href = `game.html?id=${game.id}`;
+                const releaseDate = game.released
+                    ? new Date(game.released).toLocaleDateString("en-US", {
+                        year: "numeric", month: "long", day: "numeric"
+                    })
+                    : "Unknown Release Date";
 
-                const releaseDate = game.released ? new Date(game.released).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                }) : 'Unknown Release Date';
+                const col = document.createElement("div");
+                col.className = "column is-one-third-desktop is-half-tablet";
 
-                li.innerHTML = `
-                    <h2 class="game-title">${game.name}</h2>
-                    <div class="game-date">${releaseDate}</div>
+                col.innerHTML = `
+                    <div class="game-card" onclick="window.location.href='game.html?id=${game.id}'">
+                        <div class="card-content">
+                            <p class="game-title">${game.name}</p>
+                            <p class="game-date">
+                                <span class="icon is-small"><i class="fas fa-calendar-alt"></i></span>
+                                <span>${releaseDate}</span>
+                            </p>
+                        </div>
+                    </div>
                 `;
-                list.appendChild(li);
+                gameList.appendChild(col);
             });
         }
 
         function fetchGames(query) {
-            list.innerHTML = '<div class="loading">Loading games...</div>';
+            gameList.innerHTML = `
+                <div class="column is-12 loading-state">
+                    <span class="icon is-large"><i class="fas fa-spinner fa-spin fa-2x"></i></span>
+                    <p class="mt-3">Loading games...</p>
+                </div>`;
+            gameCount.textContent = "";
+
             const url = query
                 ? `http://localhost:3000/games/search/${encodeURIComponent(query)}`
                 : "http://localhost:3000/games";
 
             fetch(url)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
+                .then(res => {
+                    if (!res.ok) throw new Error("Network error");
+                    return res.json();
                 })
                 .then(data => renderGames(data))
                 .catch(err => {
                     console.error("Error:", err);
-                    list.innerHTML = `<div class="error">Failed to load games: ${err.message}</div>`;
+                    gameList.innerHTML = `<div class="column is-12 error-state">
+                        <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+                        <p>Failed to load games: ${err.message}</p>
+                    </div>`;
                 });
         }
 
-        searchInput.addEventListener("input", () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                fetchGames(searchInput.value.trim());
-            }, 300);
+        // Search with debounce
+        $(document).ready(function () {
+            $("#search-input").on("input", function () {
+                clearTimeout(debounceTimer);
+                const query = $(this).val().trim();
+                debounceTimer = setTimeout(() => fetchGames(query), 300);
+            });
         });
 
         // Initial load
