@@ -9,7 +9,7 @@ import os
 API_KEY = "cb8e1e94869749b68581b56771c93ebb"
 RAWG_URL = "https://api.rawg.io/api/games"
 PAGE_SIZE = 40  # max per RAWG API is 40
-MAX_PAGES = 5   # fetch 5 pages (~200 games)
+MAX_PAGES = 13  # fetch 13 pages (~520 games)
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "games.db")
 
 # -----------------------
