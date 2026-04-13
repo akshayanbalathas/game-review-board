@@ -121,6 +121,50 @@ app.delete("/reviews/:id", (req, res) => {
   });
 });
 
+// Stats: games per release year
+app.get("/stats/years", (req, res) => {
+  const sql = `
+    SELECT substr(released, 1, 4) as year, COUNT(*) as count
+    FROM games
+    WHERE released IS NOT NULL AND released != ''
+    GROUP BY year
+    ORDER BY year ASC
+  `;
+  db.all(sql, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+// Stats: games per release month
+app.get("/stats/months", (req, res) => {
+  const sql = `
+    SELECT substr(released, 6, 2) as month, COUNT(*) as count
+    FROM games
+    WHERE released IS NOT NULL AND released != ''
+    GROUP BY month
+    ORDER BY month ASC
+  `;
+  db.all(sql, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+// Stats: review rating distribution
+app.get("/stats/ratings", (req, res) => {
+  const sql = `
+    SELECT rating, COUNT(*) as count
+    FROM reviews
+    GROUP BY rating
+    ORDER BY rating ASC
+  `;
+  db.all(sql, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
 // -----------------------
 // Start server
 // -----------------------
