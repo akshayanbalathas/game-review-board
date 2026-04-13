@@ -15,14 +15,19 @@ Open **http://localhost:3000**
 ## Tech Stack
 
 - **Backend**: Node.js, Express.js, SQLite3
-- **Frontend**: HTML, CSS, JavaScript
+- **Frontend**: HTML, CSS, JavaScript, Bulma, jQuery, D3.js
 - **Game Data**: [RAWG API](https://rawg.io/apidocs)
+
+## Pages
+
+- **Home** — Browse and search games
+- **Game Detail** — View game info and write reviews
+- **All Reviews** — See all community reviews
+- **Stats Dashboard** — D3.js charts (release year, monthly trend, rating distribution)
 
 ## In Progress
 
 - Vue.js frontend migration
-- D3.js stats dashboard
-- Bulma CSS integration
-- User authentication (JWT) (TBD)
+- User authentication (JWT)
 - Favorites system
 - Responsive design

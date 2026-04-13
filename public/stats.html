@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Stats - Game Review Board</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --card-bg: #1e293b;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --card-border: #334155;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #1e293b;
+        }
+        .navbar-item, .navbar-link, .navbar-burger {
+            color: var(--text-color) !important;
+        }
+        .navbar-item:hover {
+            background-color: #334155 !important;
+        }
+        .navbar-menu {
+            background-color: #1e293b;
+        }
+
+        .logo-svg {
+            height: 40px;
+            margin-right: 8px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .chart-subtitle {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* D3 chart styles */
+        .bar { transition: opacity 0.2s; }
+        .bar:hover { opacity: 0.8; }
+        .axis text { fill: #94a3b8; font-size: 12px; }
+        .axis line, .axis path { stroke: #334155; }
+        .grid line { stroke: #334155; stroke-opacity: 0.5; }
+        .grid path { stroke-width: 0; }
+        .tooltip {
+            position: absolute;
+            background: #1e293b;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #f8fafc;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .stat-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .empty-chart {
+            text-align: center;
+            color: #94a3b8;
+            padding: 3rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="index.html">
+                <svg class="logo-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="36" height="36" rx="8" fill="#3b82f6"/>
+                    <text x="20" y="28" text-anchor="middle" fill="white" font-size="22" font-weight="bold">G</text>
+                </svg>
+                <span style="font-weight: 700; font-size: 1.2rem;">Game Review Board</span>
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainNavbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="mainNavbar" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="index.html">
+                    <span class="icon"><i class="fas fa-home"></i></span>
+                    <span>Home</span>
+                </a>
+                <a class="navbar-item" href="all-reviews.html">
+                    <span class="icon"><i class="fas fa-comments"></i></span>
+                    <span>All Reviews</span>
+                </a>
+                <a class="navbar-item" href="stats.html">
+                    <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                    <span>Stats</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero is-small" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding-top: 52px;">
+        <div class="hero-body has-text-centered">
+            <p class="title" style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                Community Stats
+            </p>
+            <p class="subtitle" style="color: #94a3b8;">
+                Data insights from our game library and reviews
+            </p>
+        </div>
+    </section>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Stats content -->
+    <section class="section" style="background-color: var(--bg-color);">
+        <div class="container">
+            <!-- Summary boxes -->
+            <div class="columns is-multiline mb-5" id="summary-boxes">
+                <div class="column is-one-third">
+                    <div class="stat-box">
+                        <div class="stat-number" id="total-games">-</div>
+                        <div class="stat-label">Total Games</div>
+                    </div>
+                </div>
+                <div class="column is-one-third">
+                    <div class="stat-box">
+                        <div class="stat-number" id="total-reviews">-</div>
+                        <div class="stat-label">Total Reviews</div>
+                    </div>
+                </div>
+                <div class="column is-one-third">
+                    <div class="stat-box">
+                        <div class="stat-number" id="avg-rating">-</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 1: Games per year -->
+            <div class="chart-card">
+                <p class="chart-title">
+                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                    Games by Release Year
+                </p>
+                <p class="chart-subtitle">Number of games in our library released each year</p>
+                <div id="year-chart"></div>
+            </div>
+
+            <!-- Chart 2: Games per month -->
+            <div class="chart-card">
+                <p class="chart-title">
+                    <span class="icon"><i class="fas fa-chart-line"></i></span>
+                    Monthly Release Trend
+                </p>
+                <p class="chart-subtitle">Which months see the most game releases</p>
+                <div id="month-chart"></div>
+            </div>
+
+            <!-- Chart 3: Rating distribution -->
+            <div class="chart-card">
+                <p class="chart-title">
+                    <span class="icon"><i class="fas fa-star"></i></span>
+                    Review Rating Distribution
+                </p>
+                <p class="chart-subtitle">How the community rates games</p>
+                <div id="rating-chart"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" style="background-color: #1e293b; padding: 2rem;">
+        <div class="content has-text-centered">
+            <p style="color: #94a3b8;">
+                <strong style="color: var(--text-color);">Game Review Board</strong> — CSCI 3230 Group Project 2026.
+                Game data from <a href="https://rawg.io" style="color: var(--accent);">RAWG API</a>.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar burger toggle
+        $(document).ready(function () {
+            $(".navbar-burger").click(function () {
+                $(".navbar-burger").toggleClass("is-active");
+                $(".navbar-menu").toggleClass("is-active");
+            });
+        });
+
+        const tooltip = d3.select("#tooltip");
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        // Load summary stats
+        function loadSummary() {
+            fetch("http://localhost:3000/games")
+                .then(r => r.json())
+                .then(games => {
+                    document.getElementById("total-games").textContent = games.length;
+                });
+
+            fetch("http://localhost:3000/reviews")
+                .then(r => r.json())
+                .then(reviews => {
+                    document.getElementById("total-reviews").textContent = reviews.length;
+                    if (reviews.length > 0) {
+                        const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+                        document.getElementById("avg-rating").textContent = avg.toFixed(1) + " ★";
+                    } else {
+                        document.getElementById("avg-rating").textContent = "N/A";
+                    }
+                });
+        }
+
+        // Chart 1: Games by release year (bar chart)
+        function drawYearChart() {
+            fetch("http://localhost:3000/stats/years")
+                .then(r => r.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        d3.select("#year-chart").html('<div class="empty-chart">No data available</div>');
+                        return;
+                    }
+
+                    const container = document.getElementById("year-chart");
+                    const width = container.clientWidth;
+                    const height = 350;
+                    const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+
+                    const svg = d3.select("#year-chart")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+
+                    const x = d3.scaleBand()
+                        .domain(data.map(d => d.year))
+                        .range([margin.left, width - margin.right])
+                        .padding(0.2);
+
+                    const y = d3.scaleLinear()
+                        .domain([0, d3.max(data, d => d.count)])
+                        .nice()
+                        .range([height - margin.bottom, margin.top]);
+
+                    // Grid lines
+                    svg.append("g")
+                        .attr("class", "grid")
+                        .attr("transform", `translate(${margin.left},0)`)
+                        .call(d3.axisLeft(y).tickSize(-(width - margin.left - margin.right)).tickFormat(""));
+
+                    // Bars
+                    svg.selectAll(".bar")
+                        .data(data)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "bar")
+                        .attr("x", d => x(d.year))
+                        .attr("y", d => y(d.count))
+                        .attr("width", x.bandwidth())
+                        .attr("height", d => y(0) - y(d.count))
+                        .attr("fill", "#3b82f6")
+                        .attr("rx", 4)
+                        .on("mouseover", function (event, d) {
+                            tooltip.style("opacity", 1)
+                                .html(`<strong>${d.year}</strong><br>${d.count} games`)
+                                .style("left", (event.pageX + 10) + "px")
+                                .style("top", (event.pageY - 30) + "px");
+                        })
+                        .on("mouseout", function () {
+                            tooltip.style("opacity", 0);
+                        });
+
+                    // X axis
+                    svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", `translate(0,${height - margin.bottom})`)
+                        .call(d3.axisBottom(x))
+                        .selectAll("text")
+                        .attr("transform", "rotate(-45)")
+                        .style("text-anchor", "end");
+
+                    // Y axis
+                    svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", `translate(${margin.left},0)`)
+                        .call(d3.axisLeft(y).ticks(5));
+                });
+        }
+
+        // Chart 2: Monthly release trend (line chart)
+        function drawMonthChart() {
+            fetch("http://localhost:3000/stats/months")
+                .then(r => r.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        d3.select("#month-chart").html('<div class="empty-chart">No data available</div>');
+                        return;
+                    }
+
+                    // Map month numbers to names
+                    data = data.map(d => ({
+                        month: monthNames[parseInt(d.month) - 1] || d.month,
+                        monthNum: parseInt(d.month),
+                        count: d.count
+                    })).sort((a, b) => a.monthNum - b.monthNum);
+
+                    const container = document.getElementById("month-chart");
+                    const width = container.clientWidth;
+                    const height = 300;
+                    const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+
+                    const svg = d3.select("#month-chart")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+
+                    const x = d3.scalePoint()
+                        .domain(data.map(d => d.month))
+                        .range([margin.left, width - margin.right])
+                        .padding(0.5);
+
+                    const y = d3.scaleLinear()
+                        .domain([0, d3.max(data, d => d.count)])
+                        .nice()
+                        .range([height - margin.bottom, margin.top]);
+
+                    // Grid
+                    svg.append("g")
+                        .attr("class", "grid")
+                        .attr("transform", `translate(${margin.left},0)`)
+                        .call(d3.axisLeft(y).tickSize(-(width - margin.left - margin.right)).tickFormat(""));
+
+                    // Area fill
+                    const area = d3.area()
+                        .x(d => x(d.month))
+                        .y0(height - margin.bottom)
+                        .y1(d => y(d.count))
+                        .curve(d3.curveMonotoneX);
+
+                    svg.append("path")
+                        .datum(data)
+                        .attr("fill", "rgba(59, 130, 246, 0.15)")
+                        .attr("d", area);
+
+                    // Line
+                    const line = d3.line()
+                        .x(d => x(d.month))
+                        .y(d => y(d.count))
+                        .curve(d3.curveMonotoneX);
+
+                    svg.append("path")
+                        .datum(data)
+                        .attr("fill", "none")
+                        .attr("stroke", "#3b82f6")
+                        .attr("stroke-width", 2.5)
+                        .attr("d", line);
+
+                    // Dots
+                    svg.selectAll(".dot")
+                        .data(data)
+                        .enter()
+                        .append("circle")
+                        .attr("cx", d => x(d.month))
+                        .attr("cy", d => y(d.count))
+                        .attr("r", 5)
+                        .attr("fill", "#3b82f6")
+                        .attr("stroke", "#0f172a")
+                        .attr("stroke-width", 2)
+                        .on("mouseover", function (event, d) {
+                            d3.select(this).attr("r", 7);
+                            tooltip.style("opacity", 1)
+                                .html(`<strong>${d.month}</strong><br>${d.count} games`)
+                                .style("left", (event.pageX + 10) + "px")
+                                .style("top", (event.pageY - 30) + "px");
+                        })
+                        .on("mouseout", function () {
+                            d3.select(this).attr("r", 5);
+                            tooltip.style("opacity", 0);
+                        });
+
+                    // Axes
+                    svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", `translate(0,${height - margin.bottom})`)
+                        .call(d3.axisBottom(x));
+
+                    svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", `translate(${margin.left},0)`)
+                        .call(d3.axisLeft(y).ticks(5));
+                });
+        }
+
+        // Chart 3: Rating distribution (bar chart)
+        function drawRatingChart() {
+            fetch("http://localhost:3000/stats/ratings")
+                .then(r => r.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        d3.select("#rating-chart").html('<div class="empty-chart">No reviews yet — be the first to rate a game!</div>');
+                        return;
+                    }
+
+                    // Fill in missing ratings (1-5)
+                    const fullData = [1, 2, 3, 4, 5].map(r => {
+                        const found = data.find(d => d.rating === r);
+                        return { rating: r, count: found ? found.count : 0 };
+                    });
+
+                    const container = document.getElementById("rating-chart");
+                    const width = container.clientWidth;
+                    const height = 280;
+                    const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+
+                    const svg = d3.select("#rating-chart")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+
+                    const x = d3.scaleBand()
+                        .domain(fullData.map(d => d.rating + " ★"))
+                        .range([margin.left, width - margin.right])
+                        .padding(0.35);
+
+                    const y = d3.scaleLinear()
+                        .domain([0, d3.max(fullData, d => d.count) || 5])
+                        .nice()
+                        .range([height - margin.bottom, margin.top]);
+
+                    const colors = ["#ef4444", "#f97316", "#eab308", "#84cc16", "#22c55e"];
+
+                    // Bars
+                    svg.selectAll(".bar")
+                        .data(fullData)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "bar")
+                        .attr("x", d => x(d.rating + " ★"))
+                        .attr("y", d => y(d.count))
+                        .attr("width", x.bandwidth())
+                        .attr("height", d => y(0) - y(d.count))
+                        .attr("fill", (d, i) => colors[i])
+                        .attr("rx", 4)
+                        .on("mouseover", function (event, d) {
+                            tooltip.style("opacity", 1)
+                                .html(`<strong>${d.rating} Star</strong><br>${d.count} reviews`)
+                                .style("left", (event.pageX + 10) + "px")
+                                .style("top", (event.pageY - 30) + "px");
+                        })
+                        .on("mouseout", function () {
+                            tooltip.style("opacity", 0);
+                        });
+
+                    // Count labels on bars
+                    svg.selectAll(".bar-label")
+                        .data(fullData)
+                        .enter()
+                        .append("text")
+                        .attr("x", d => x(d.rating + " ★") + x.bandwidth() / 2)
+                        .attr("y", d => y(d.count) - 6)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "#94a3b8")
+                        .attr("font-size", "13px")
+                        .attr("font-weight", "600")
+                        .text(d => d.count > 0 ? d.count : "");
+
+                    // Axes
+                    svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", `translate(0,${height - margin.bottom})`)
+                        .call(d3.axisBottom(x));
+
+                    svg.append("g")
+                        .attr("class", "axis")
+                        .attr("transform", `translate(${margin.left},0)`)
+                        .call(d3.axisLeft(y).ticks(5));
+                });
+        }
+
+        // Load everything
+        loadSummary();
+        drawYearChart();
+        drawMonthChart();
+        drawRatingChart();
+    </script>
+</body>
+</html>
