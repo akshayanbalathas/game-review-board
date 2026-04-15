@@ -1,6 +1,6 @@
 # Game Review Board
 
-Game Review Board is a single page web application where users can browse games, view game details, write reviews, and explore community statistics.
+Game Review Board is a single page web application where users can browse games, view game details, write reviews, save favourite games, and explore community statistics.
 
 ## Overview
 
@@ -11,6 +11,7 @@ This project was developed as a group web application using a Node.js and Expres
 - Browse and search for games
 - View detailed information for individual games
 - Add and delete reviews
+- Add and remove favourite games
 - View all community reviews
 - Explore statistics through D3.js visualizations
 - Navigate the application through Vue Router in a single page interface
@@ -22,11 +23,11 @@ The application uses hash-based Vue Router paths such as:
 - `/#/`
 - `/#/reviews`
 - `/#/stats`
+- `/#/favourites`
 - `/#/game/123`
 
 ## Frontend Structure
 
-```text
 public/
 ├── index.html
 ├── css/
@@ -39,15 +40,15 @@ public/
         ├── HomePage.js
         ├── GamePage.js
         ├── AllReviewsPage.js
-        └── StatsPage.js
-````
+        ├── StatsPage.js
+        └── FavouritesPage.js
 
 ## Tech Stack
 
-- Backend: Node.js, Express.js, SQLite3
-- Frontend: HTML, CSS, JavaScript, Vue Router, Bootstrap, D3.js
-- Game Data Source: RAWG API
-- Local Database: SQLite3
+* Backend: Node.js, Express.js, SQLite3
+* Frontend: HTML, CSS, JavaScript, Vue Router, Bootstrap, D3.js
+* Game Data Source: RAWG
+* Local Database: SQLite3
 
 ## How to Run
 
@@ -59,17 +60,19 @@ public/
 
 ## Project Notes
 
-- The frontend was refactored into a single page application using Vue Router.
-- Navigation is handled through routed Vue components.
-- A shared NavBar component is used across the whole application.
-- SQLite3 is used as the local database for storing game and review data.
-- D3.js is used for charts and data visualization on the stats page.
-- The `rawg.py` script was updated to include more game information, such as images and other metadata.
-- Adult games were manually reviewed and removed from the dataset when identified.
+* The frontend was refactored into a single page application using Vue Router.
+* Navigation is handled dynamically through routed Vue components.
+* A shared NavBar component is used across the application.
+* SQLite3 is used as the local database to store game, review, and favourite data.
+* D3.js is used to generate charts and support data visualization on the statistics page.
+* The `rawg.py` script was updated to import additional game information, including images and other metadata.
+* Adult games were manually reviewed and removed from the dataset where identified.
+* The application includes a working favourites system for saving and removing games.
 
 ## Pages
 
 * **Home Page**: browse and search for games
-* **Game Detail Page**: view game information and reviews
+* **Game Detail Page**: view game information, reviews, and add or remove favourites
 * **All Reviews Page**: see reviews from all users
 * **Statistics Dashboard**: view charts for release years, monthly trends, and rating distribution
+* **Favourites Page**: view and manage saved favourite games
