@@ -1,4 +1,3 @@
-```markdown
 # Game Review Board
 
 Game Review Board is a single page web application where users can browse games, view game details, write reviews, and explore community statistics.
