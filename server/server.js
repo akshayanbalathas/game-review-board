@@ -43,6 +43,16 @@ db.serialize(() => {
     )
   `);
 
+  db.run(`
+    CREATE TABLE IF NOT EXISTS favourites (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      game_id INTEGER NOT NULL UNIQUE,
+      game_name TEXT NOT NULL,
+      game_image TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   console.log("Tables ready");
 });
 
@@ -178,6 +188,71 @@ app.delete("/reviews/:id", (req, res) => {
     if (this.changes === 0) return res.status(404).json({ error: "Review not found" });
     res.json({ message: "Review deleted" });
   });
+});
+
+// -----------------------
+// Favourites Routes
+// -----------------------
+// GET /favourites — get all favourite games
+app.get("/favourites", (req, res) => {
+  db.all(
+    "SELECT * FROM favourites ORDER BY created_at DESC",
+    [],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    }
+  );
+});
+
+// GET /favourites/:gameId — check if a game is favourited
+app.get("/favourites/:gameId", (req, res) => {
+  db.get(
+    "SELECT * FROM favourites WHERE game_id = ?",
+    [req.params.gameId],
+    (err, row) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ favourited: !!row });
+    }
+  );
+});
+
+// POST /favourites — add a favourite
+app.post("/favourites", (req, res) => {
+  const { game_id, game_name, game_image } = req.body;
+
+  if (!game_id || !game_name) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  db.run(
+    "INSERT OR IGNORE INTO favourites (game_id, game_name, game_image) VALUES (?, ?, ?)",
+    [game_id, game_name.trim(), game_image || null],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+
+      if (this.changes === 0) {
+        return res.json({ message: "Already in favourites" });
+      }
+
+      res.json({ message: "Favourite added", id: this.lastID });
+    }
+  );
+});
+
+// DELETE /favourites/:gameId — remove a favourite
+app.delete("/favourites/:gameId", (req, res) => {
+  db.run(
+    "DELETE FROM favourites WHERE game_id = ?",
+    [req.params.gameId],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Favourite not found" });
+      }
+      res.json({ message: "Favourite removed" });
+    }
+  );
 });
 
 // -----------------------
