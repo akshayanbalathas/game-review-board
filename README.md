@@ -28,6 +28,7 @@ The application uses hash-based Vue Router paths such as:
 
 ## Frontend Structure
 
+```text
 public/
 ├── index.html
 ├── css/
@@ -42,7 +43,7 @@ public/
         ├── AllReviewsPage.js
         ├── StatsPage.js
         └── FavouritesPage.js
-
+```
 ## Tech Stack
 
 * Backend: Node.js, Express.js, SQLite3
