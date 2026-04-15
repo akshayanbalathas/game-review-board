@@ -26,24 +26,6 @@ The application uses hash-based Vue Router paths such as:
 - `/#/favourites`
 - `/#/game/123`
 
-## Frontend Structure
-
-```text
-public/
-├── index.html
-├── css/
-│   └── style.css
-└── js/
-    ├── main.js
-    ├── router.js
-    └── components/
-        ├── NavBar.js
-        ├── HomePage.js
-        ├── GamePage.js
-        ├── AllReviewsPage.js
-        ├── StatsPage.js
-        └── FavouritesPage.js
-```
 ## Tech Stack
 
 * Backend: Node.js, Express.js, SQLite3
