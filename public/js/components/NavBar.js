@@ -20,6 +20,7 @@ const NavBar = {
           <li><router-link to="/"><i class="fas fa-home"></i> Home</router-link></li>
           <li><router-link to="/reviews"><i class="fas fa-comments"></i> All Reviews</router-link></li>
           <li><router-link to="/stats"><i class="fas fa-chart-bar"></i> Stats</router-link></li>
+          <li><router-link to="/favourites"><i class="fas fa-heart"></i> Favourites</router-link></li>
         </ul>
       </div>
       <ul class="nav-auth">

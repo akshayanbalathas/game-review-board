@@ -18,6 +18,22 @@ const GamePage = {
                 <span v-for="g in game.genres.split(',').slice(0,4)" :key="g" class="genre-tag badge">{{ g.trim() }}</span>
               </template>
             </div>
+            <div class="mt-3">
+              <button
+                  v-if="!isFavourited"
+                  class="btn submit-btn"
+                  @click="addFavourite"
+              >
+                <i class="fas fa-heart"></i> Add to Favourites
+              </button>
+              <button
+                v-else
+                class="btn btn-danger"
+                @click="removeFavourite"
+              >
+                <i class="fas fa-heart-broken"></i> Remove from Favourites
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -112,6 +128,7 @@ const GamePage = {
     const submitting = ref(false);
     const submitSuccess = ref(false);
     const submitError = ref('');
+    const isFavourited = ref(false);
 
     const form = ref({ username: '', rating: 0, comment: '' });
 
@@ -142,6 +159,7 @@ const GamePage = {
         const res = await fetch(`${API}/games/${gameId}`);
         game.value = await res.json();
         document.title = `${game.value.name} — Game Review Board`;
+        await checkFavourite();
       } catch (e) {
         console.error(e);
       } finally {
@@ -159,6 +177,49 @@ const GamePage = {
         console.error(e);
       } finally {
         reviewsLoading.value = false;
+      }
+    }
+
+    async function checkFavourite() {
+      if (!gameId) return;
+      try {
+        const res = await fetch(`${API}/favourites/${gameId}`);
+        const data = await res.json();
+        isFavourited.value = data.favourited;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function addFavourite() {
+      if (!game.value) return;
+      try {
+        const res = await fetch(`${API}/favourites`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            game_id: parseInt(gameId),
+            game_name: game.value.name,
+            game_image: game.value.background_image
+          })
+        });
+
+        if (!res.ok) throw new Error('Failed to add favourite');
+        isFavourited.value = true;
+      } catch (e) {
+        alert('Failed to add favourite.');
+      }
+    }
+    async function removeFavourite() {
+      try {
+        const res = await fetch(`${API}/favourites/${gameId}`, {
+          method: 'DELETE'
+        });
+
+        if (!res.ok) throw new Error('Failed to remove favourite');
+        isFavourited.value = false;
+      } catch (e) {
+        alert('Failed to remove favourite.');
       }
     }
 
@@ -212,8 +273,10 @@ const GamePage = {
     return {
       game, reviews, gameLoading, reviewsLoading,
       form, submitting, submitSuccess, submitError,
+      isFavourited,
       avgRating, avgRatingNum, starString, formatDate,
-      formatDateTime, submitReview, deleteReview
+      formatDateTime, submitReview, deleteReview,
+      addFavourite, removeFavourite
     };
   }
 };
