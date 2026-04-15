@@ -1,0 +1,742 @@
+/* =============================================
+   Game Review Board — Shared Stylesheet
+   CSCI 3230 Group Project 2026
+   ============================================= */
+
+:root {
+  --bg: #080c14;
+  --surface: #0f1623;
+  --surface2: #161e2e;
+  --border: rgba(255,255,255,0.07);
+  --accent: #e8ff47;
+  --accent2: #47c8ff;
+  --text: #f0f4ff;
+  --muted: #6b7a99;
+  --danger: #ff4757;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ---- NAVBAR ---- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-auth a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.nav-auth a:hover {
+  color: var(--text);
+  background: var(--surface2);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400;
+  font-size: 1.6rem;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}
+
+.nav-logo {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.nav-logo svg { width: 18px; height: 18px; }
+
+.nav-links {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-links li {
+  display: flex;
+}
+
+.nav-link:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+/* ---- FOOTER ---- */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+
+/* ---- SPINNER ---- */
+.spinner {
+  display: inline-block;
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- EMPTY STATE ---- */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+}
+
+.empty-state i { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+
+/* ---- PAGE HEADER (all-reviews, stats) ---- */
+.page-header {
+  padding: 3.5rem 2rem 1rem;
+  text-align: center;
+}
+
+.page-header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.page-header h1 span { color: var(--accent); }
+.page-header p { color: var(--muted); }
+
+/* ---- MOBILE ---- */
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+}
+
+
+/* =============================================
+   INDEX PAGE
+   ============================================= */
+
+.hero {
+  padding: 5rem 2rem 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(232,255,71,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1.0;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+}
+
+.hero h1 span { color: var(--accent); }
+
+.hero p {
+  color: var(--muted);
+  font-size: 1.1rem;
+  max-width: 480px;
+  margin: 0 auto 2.5rem;
+}
+
+.controls {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
+}
+
+.search-wrap {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-wrap i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.search-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.85rem 1rem 0.85rem 2.75rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.search-input::placeholder { color: var(--muted); }
+.search-input:focus { border-color: rgba(232,255,71,0.4); }
+
+.filter-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  outline: none;
+}
+
+.filter-select:focus { border-color: rgba(232,255,71,0.4); }
+
+.filter-chip {
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.filter-chip:hover { border-color: rgba(232,255,71,0.3); color: var(--text); }
+.filter-chip.active { background: var(--accent); color: #080c14; border-color: var(--accent); font-weight: 600; }
+
+.result-count {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.game-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.game-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s, box-shadow 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(232,255,71,0.35);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,255,71,0.1);
+}
+
+.card-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: var(--surface2);
+  display: block;
+}
+
+.card-img-placeholder {
+  width: 100%;
+  height: 160px;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 2rem;
+}
+
+.card-body {
+  padding: 1.1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card-title {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.card-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.genre-tag {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(71,200,255,0.1);
+  color: var(--accent2);
+  border: 1px solid rgba(71,200,255,0.15);
+}
+
+.metacritic-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(232,255,71,0.1);
+  color: var(--accent);
+  border: 1px solid rgba(232,255,71,0.2);
+}
+
+.state-box {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+}
+
+.state-box i { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+
+
+/* =============================================
+   GAME PAGE
+   ============================================= */
+
+.game-hero {
+  position: relative;
+  height: 380px;
+  overflow: hidden;
+}
+
+.hero-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(0.4);
+}
+
+.hero-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4rem; color: var(--muted);
+}
+
+.hero-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 2rem 3rem;
+  background: linear-gradient(transparent, rgba(8,12,20,0.95));
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
+}
+
+.meta-pill {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.85rem; color: var(--muted);
+}
+
+.meta-pill i { font-size: 0.75rem; }
+
+.star-score { color: var(--accent); font-weight: 700; font-size: 1rem; }
+
+.mc-badge {
+  padding: 2px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700;
+  background: rgba(232,255,71,0.12); color: var(--accent); border: 1px solid rgba(232,255,71,0.25);
+}
+
+/* PAGE BODY — Bootstrap .container > .row handles layout */
+.page-body {
+  padding: 2.5rem 0 4rem;
+}
+
+/* Equal height columns */
+.page-body > .row {
+  align-items: stretch;
+}
+
+/* Left column: flex column so the Write a Review card can grow */
+.page-body > .row > .col-12.col-lg-4 {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Write a Review card (last card in left col) stretches to fill remaining height */
+.page-body > .row > .col-12.col-lg-4 > .card:last-child {
+  flex: 1;
+}
+
+/* Right column stretches to fill row height */
+.page-body > .row > .col-12.col-lg-8 {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-body > .row > .col-12.col-lg-8 > .card {
+  flex: 1;
+}
+
+/* ---- CARD ---- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+}
+
+.card-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.03em;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+
+.form { display: flex; flex-direction: column; gap: 0.875rem; }
+
+.form input, .form select, .form textarea {
+  width: 100%;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); padding: 0.75rem 1rem;
+  border-radius: 10px; font-size: 0.95rem;
+  font-family: 'DM Sans', sans-serif; outline: none;
+  transition: border-color 0.2s;
+}
+
+.form input:focus, .form select:focus, .form textarea:focus { border-color: rgba(232,255,71,0.4); }
+.form textarea { resize: vertical; }
+.form option { background: #161e2e; }
+
+.star-picker { display: flex; gap: 6px; }
+
+.star-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 1.6rem; line-height: 1;
+  color: var(--muted);
+  transition: transform 0.15s, color 0.15s;
+}
+
+.star-btn:hover, .star-btn.active { color: var(--accent); transform: scale(1.2); }
+
+.submit-btn {
+  background: var(--accent); color: #080c14;
+  border: none; padding: 0.8rem 1.5rem;
+  border-radius: 10px; font-weight: 700; font-size: 0.95rem;
+  cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.submit-btn:hover { opacity: 0.88; }
+.submit-btn:active { transform: scale(0.97); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.review-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.review-item {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.25rem;
+  transition: border-color 0.2s;
+}
+
+.review-item:hover { border-color: rgba(255,255,255,0.12); }
+
+.review-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 0.6rem; gap: 0.5rem;
+}
+
+.review-author { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.03em; }
+.review-stars { color: var(--accent); letter-spacing: 1px; font-size: 0.9rem; }
+.review-date { color: var(--muted); font-size: 0.78rem; }
+.review-comment { color: #c4ccdc; line-height: 1.65; font-size: 0.9rem; margin-top: 0.5rem; }
+
+.delete-btn {
+  background: transparent; color: var(--danger);
+  border: 1px solid rgba(255,71,87,0.3); padding: 0.25rem 0.7rem;
+  border-radius: 6px; font-size: 0.75rem; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif; margin-top: 0.75rem;
+  display: inline-block;
+}
+
+.delete-btn:hover { background: var(--danger); color: white; }
+
+.success-msg {
+  background: rgba(232,255,71,0.08); border: 1px solid rgba(232,255,71,0.2);
+  color: var(--accent); padding: 0.75rem 1rem; border-radius: 10px;
+  font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+}
+
+.error-msg {
+  background: rgba(255,71,87,0.08); border: 1px solid rgba(255,71,87,0.2);
+  color: var(--danger); padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.9rem;
+}
+
+.avg-bar {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.avg-num { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--accent); }
+.avg-stars { color: var(--accent); font-size: 1.2rem; }
+.avg-label { color: var(--muted); font-size: 0.85rem; }
+
+
+/* =============================================
+   ALL REVIEWS PAGE
+   ============================================= */
+
+.all-reviews-body { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+.filter-bar {
+  display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center;
+}
+
+.filter-bar input {
+  flex: 1; min-width: 200px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); padding: 0.6rem 1rem;
+  border-radius: 10px; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; outline: none;
+}
+
+.filter-bar input:focus { border-color: rgba(232,255,71,0.4); }
+
+.filter-bar select {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.9rem;
+  font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer;
+}
+
+.count-label { color: var(--muted); font-size: 0.82rem; margin-left: auto; }
+
+.review-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  cursor: pointer; transition: border-color 0.2s, transform 0.2s;
+  margin-bottom: 1rem;
+}
+
+.review-card:hover { border-color: rgba(232,255,71,0.3); transform: translateY(-2px); }
+
+.review-img {
+  width: 100%; height: 100px; object-fit: cover;
+  display: block; filter: brightness(0.5);
+}
+
+.game-name-badge {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 0.5rem 1rem;
+  background: linear-gradient(transparent, rgba(8,12,20,0.9));
+  font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.03em;
+}
+
+.review-card-body { padding: 1rem 1.25rem; }
+
+.review-card-top { position: relative; }
+
+.no-image-band {
+  background: var(--surface2); padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+  letter-spacing: 0.03em; color: var(--accent2);
+}
+
+
+/* =============================================
+   STATS PAGE
+   ============================================= */
+
+.stats-body {
+  max-width: 1100px; margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+/*
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+*/
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.0rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  aspect-ratio: 2 / 1;
+  max-width: 350px;
+  width: 100%;
+  min-height: 150px;
+  /* margin: 0 auto; */
+}
+
+.stat-card .label {
+  font-size: 0.78rem; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted);
+}
+
+.stat-card .value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem; letter-spacing: 0.02em; color: var(--accent);
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 750px) { .charts-grid { grid-template-columns: 1fr; } }
+
+.chart-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5rem;
+}
+
+.chart-title {
+  font-size: 1rem; font-weight: 600;
+  margin-bottom: 0.4rem; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+
+.chart-title i { color: var(--accent); font-size: 0.85rem; }
+
+.chart-subtitle { font-size: 0.8rem; color: var(--muted); margin-bottom: 1.25rem; }
+
+/* D3 */
+.bar { cursor: pointer; transition: opacity 0.15s; }
+.bar:hover { opacity: 0.8; }
+.axis text { fill: #6b7a99; font-size: 11px; font-family: 'DM Sans', sans-serif; }
+.axis path, .axis line { stroke: rgba(255,255,255,0.07); }
+.grid line { stroke: rgba(255,255,255,0.04); stroke-dasharray: 3,3; }
+.grid path { stroke: none; }
+.bar-label { fill: #f0f4ff; font-size: 10px; font-family: 'DM Sans', sans-serif; }
+
+.tooltip {
+  position: absolute;
+  background: var(--surface2);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.empty-chart {
+  text-align: center; color: var(--muted);
+  padding: 3rem; font-style: italic;
+}

@@ -1,16 +1,11 @@
-# Dependencies
-node_modules/
-
-# Environment
-.env
+# Node modules (server only)
+server/node_modules/
 
 # Logs
 *.log
 
-# Python
-__pycache__/
-*.pyc
+# SQLite temp files
+*.db-journal
 
-# OS files
-.DS_Store
-Thumbs.db
+# Environment files
+.env
