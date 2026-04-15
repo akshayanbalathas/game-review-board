@@ -1,0 +1,11 @@
+# Node modules (server only)
+server/node_modules/
+
+# Logs
+*.log
+
+# SQLite temp files
+*.db-journal
+
+# Environment files
+.env
