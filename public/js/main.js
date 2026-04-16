@@ -14,11 +14,14 @@ const app = createApp({
   `,
   setup() {
     const isLoggedIn = ref(localStorage.getItem('loggedIn') === 'true');
+
     function logout() {
       localStorage.removeItem('loggedIn');
+      localStorage.removeItem('currentUser');
       isLoggedIn.value = false;
       router.push('/');
     }
+
     return { isLoggedIn, logout };
   }
 });
@@ -28,6 +31,8 @@ app.component('HomePage', HomePage);
 app.component('GamePage', GamePage);
 app.component('AllReviewsPage', AllReviewsPage);
 app.component('StatsPage', StatsPage);
+app.component('LoginPage', LoginPage);
+app.component('SignUpPage', SignupPage);
 
 app.use(router);
 app.mount('#app');

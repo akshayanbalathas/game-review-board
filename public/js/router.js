@@ -7,6 +7,8 @@ const router = createRouter({
     { path: '/reviews',    component: AllReviewsPage },
     { path: '/stats',      component: StatsPage },
     { path: '/game/:id',   component: GamePage },
-    { path: '/favourites', component: FavouritesPage }
+    { path: '/favourites', component: FavouritesPage },
+    { path: '/login',      component: LoginPage },
+    { path: '/signup', component: SignupPage}
   ]
 });
