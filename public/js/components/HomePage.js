@@ -35,9 +35,13 @@ const HomePage = {
 
       <div class="container">
         <div class="game-grid">
-          <div class="state-box" v-if="loading">
-            <div class="spinner"></div><p>Loading games...</p>
-          </div>
+          <template v-if="loading">
+            <div v-for="n in 8" :key="n" class="skeleton-card">
+              <div class="skeleton-img"></div>
+              <div class="skeleton-text"></div>
+              <div class="skeleton-text-sm"></div>
+            </div>
+          </template>
           <div class="state-box" v-else-if="games.length === 0">
             <i class="fas fa-search"></i><p>No games found.</p>
           </div>

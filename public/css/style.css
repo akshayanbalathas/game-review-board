@@ -740,3 +740,65 @@ footer a { color: var(--accent); text-decoration: none; }
   text-align: center; color: var(--muted);
   padding: 3rem; font-style: italic;
 }
+
+/* ---- FORM VALIDATION SHAKE ---- */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+.alert-danger {
+  animation: shake 0.4s ease;
+}
+
+/* ---- SKELETON LOADING ---- */
+@keyframes skeleton-pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0.4; }
+}
+
+.skeleton {
+  background: var(--surface2);
+  border-radius: 10px;
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.skeleton-card {
+  height: 260px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.skeleton-card .skeleton-img {
+  height: 160px;
+  background: var(--surface2);
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.skeleton-card .skeleton-text {
+  margin: 1rem;
+  height: 14px;
+  width: 70%;
+  border-radius: 6px;
+  background: var(--surface2);
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.skeleton-card .skeleton-text-sm {
+  margin: 0.5rem 1rem;
+  height: 10px;
+  width: 40%;
+  border-radius: 6px;
+  background: var(--surface2);
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}

@@ -206,19 +206,19 @@ const StatsPage = {
           <div class="col-auto">
             <div class="stat-card text-center">
               <span class="label">Total Games</span>
-              <span class="value" id="total-games">—</span>
+              <span class="value">{{ totalGames }}</span>
             </div>
           </div>
           <div class="col-auto">
             <div class="stat-card text-center">
               <span class="label">Total Reviews</span>
-              <span class="value" id="total-reviews">—</span>
+              <span class="value">{{ totalReviews }}</span>
             </div>
           </div>
           <div class="col-auto">
             <div class="stat-card text-center">
               <span class="label">Average Rating</span>
-              <span class="value" id="avg-rating">—</span>
+              <span class="value">{{ avgRating }}</span>
             </div>
           </div>
         </div>
@@ -254,28 +254,32 @@ const StatsPage = {
     </div>
   `,
   setup() {
-    const { onMounted } = Vue;
+    const { ref, onMounted } = Vue;
     const API = 'http://localhost:3000';
     const tooltip = d3.select("#tooltip");
+
+    const totalGames = ref('—');
+    const totalReviews = ref('—');
+    const avgRating = ref('—');
 
     onMounted(() => {
       fetch(`${API}/stats`)
         .then(r => r.json())
         .then(stats => {
-          document.getElementById("total-reviews").textContent = stats.totalReviews;
+          totalReviews.value = stats.totalReviews;
 
           if (stats.ratingDistribution.length > 0) {
             const total = stats.ratingDistribution.reduce((a, r) => a + r.count, 0);
             const sum = stats.ratingDistribution.reduce((a, r) => a + r.rating * r.count, 0);
-            document.getElementById("avg-rating").textContent = (sum / total).toFixed(1) + " ★";
+            avgRating.value = (sum / total).toFixed(1) + ' ★';
           } else {
-            document.getElementById("avg-rating").textContent = "N/A";
+            avgRating.value = 'N/A';
           }
 
           fetch(`${API}/games?limit=500`)
             .then(r => r.json())
             .then(games => {
-              document.getElementById("total-games").textContent = games.length;
+              totalGames.value = games.length;
             });
 
           drawChart("year-chart", drawYearChart, stats.gamesByYear);
@@ -290,6 +294,6 @@ const StatsPage = {
         .catch(err => console.error("Failed to load stats:", err));
     });
 
-    return {};
+    return { totalGames, totalReviews, avgRating };
   }
 };
