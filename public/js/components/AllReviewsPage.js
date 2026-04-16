@@ -123,7 +123,16 @@ const AllReviewsPage = {
       }
     }
 
-    onMounted(loadReviews);
+    onMounted(() => {
+      loadReviews();
+      if (window.io) {
+        const socket = window.io(API);
+        socket.on("reviews_updated", () => {
+          console.log("Live review update broadcast received! Refreshing feed.");
+          loadReviews();
+        });
+      }
+    });
 
     return {
       reviews, loading, search, filterRating,

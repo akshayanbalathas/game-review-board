@@ -1,8 +1,13 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
+
 const PORT = 3000;
 
 
@@ -177,6 +182,7 @@ app.post("/reviews", (req, res) => {
   const sql = `INSERT INTO reviews (game_id, username, rating, comment) VALUES (?, ?, ?, ?)`;
   db.run(sql, [game_id, username.trim(), parseInt(rating), comment.trim()], function (err) {
     if (err) return res.status(500).json({ error: err.message });
+    io.emit("reviews_updated");
     res.json({ message: "Review added", id: this.lastID });
   });
 });
@@ -186,6 +192,7 @@ app.delete("/reviews/:id", (req, res) => {
   db.run("DELETE FROM reviews WHERE id = ?", [req.params.id], function (err) {
     if (err) return res.status(500).json({ error: err.message });
     if (this.changes === 0) return res.status(404).json({ error: "Review not found" });
+    io.emit("reviews_updated");
     res.json({ message: "Review deleted" });
   });
 });
@@ -346,6 +353,13 @@ app.get("/stats/years", (req, res) => {
 // -----------------------
 // Start Server
 // -----------------------
-app.listen(PORT, () => {
+io.on('connection', (socket) => {
+  console.log("A client connected to Socket.IO");
+  socket.on('disconnect', () => {
+    console.log("Client disconnected");
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

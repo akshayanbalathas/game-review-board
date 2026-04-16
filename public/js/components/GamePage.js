@@ -268,6 +268,14 @@ const GamePage = {
     onMounted(() => {
       loadGame();
       loadReviews();
+      
+      if (window.io) {
+        const socket = window.io(API);
+        socket.on("reviews_updated", () => {
+          console.log("Live review update broadcast received! Refreshing game comments.");
+          loadReviews();
+        });
+      }
     });
 
     return {
