@@ -111,7 +111,7 @@ const HomePage = {
       return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
     }
 
-    onMounted(() => { loadGenres(); loadGames(); });
+    onMounted(() => { document.title = 'Game Review Board'; loadGenres(); loadGames(); });
 
     return { games, genres, loading, searchQuery, selectedGenre, sortBy, loadGames, debouncedSearch, formatDate };
   }
