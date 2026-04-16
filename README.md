@@ -11,6 +11,7 @@ This project was developed as a group web application using a Node.js and Expres
 - Browse and search for games
 - View detailed information for individual games
 - Add and delete reviews
+- Real-time live updates for community reviews using Socket.IO
 - Add and remove favourite games
 - View all community reviews
 - Explore statistics through D3.js visualizations
@@ -28,8 +29,8 @@ The application uses hash-based Vue Router paths such as:
 
 ## Tech Stack
 
-* Backend: Node.js, Express.js, SQLite3
-* Frontend: HTML, CSS, JavaScript, Vue Router, Bootstrap, D3.js
+* Backend: Node.js, Express.js, Socket.IO, SQLite3
+* Frontend: HTML, CSS, JavaScript, Vue.js, Vue Router, Bootstrap, Socket.IO Client, D3.js
 * Game Data Source: RAWG
 * Local Database: SQLite3
 
