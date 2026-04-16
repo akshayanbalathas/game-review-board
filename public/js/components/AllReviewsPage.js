@@ -124,6 +124,7 @@ const AllReviewsPage = {
     }
 
     onMounted(() => {
+      document.title = 'Game Review Board';
       loadReviews();
       if (window.io) {
         const socket = window.io(API);

@@ -10,6 +10,7 @@ const FavouritesPage = {
   },
 
   async mounted() {
+    document.title = 'Game Review Board';
     await this.loadFavourites();
   },
 

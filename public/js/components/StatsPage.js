@@ -263,6 +263,7 @@ const StatsPage = {
     const avgRating = ref('—');
 
     onMounted(() => {
+      document.title = 'Game Review Board';
       fetch(`${API}/stats`)
         .then(r => r.json())
         .then(stats => {
