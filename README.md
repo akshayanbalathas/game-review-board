@@ -2,61 +2,80 @@
 
 Game Review Board is a single page web application where users can browse games, view game details, write reviews, save favourite games, and explore community statistics.
 
-## Overview
+## How to Run
 
-This project was developed as a group web application using a Node.js and Express.js backend with a Vue-based frontend. The application was refactored into a single page app using Vue Router, so navigation is handled dynamically through a shared `index.html` file and routed views.
+1. Open a terminal and navigate to the `server` folder.
+2. Run `npm install`.
+3. Run `npm start`.
+4. Open your browser and go to `http://localhost:3000`.
 
 ## Features
 
-- Browse and search for games
+- Browse and search for games with genre filtering and sorting
 - View detailed information for individual games
 - Add and delete reviews
 - Real-time live updates for community reviews using Socket.IO
 - Add and remove favourite games
 - View all community reviews
-- Explore statistics through D3.js visualizations
+- Explore statistics through D3.js visualizations (release year, monthly trends, rating distribution, top genres)
+- User authentication (login and sign up)
 - Navigate the application through Vue Router in a single page interface
-
-## Routes
-
-The application uses hash-based Vue Router paths such as:
-
-- `/#/`
-- `/#/reviews`
-- `/#/stats`
-- `/#/favourites`
-- `/#/game/123`
 
 ## Tech Stack
 
-* Backend: Node.js, Express.js, Socket.IO, SQLite3
-* Frontend: HTML, CSS, JavaScript, Vue.js, Vue Router, Bootstrap, Socket.IO Client, D3.js
-* Game Data Source: RAWG
-* Local Database: SQLite3
+| Layer | Technology |
+|-------|-----------|
+| Backend | Node.js, Express.js, Socket.IO, SQLite3 |
+| Frontend | HTML, CSS, JavaScript, Vue.js, Vue Router, jQuery, Bootstrap, D3.js |
+| Graphics | SVG (D3-generated charts) |
+| Game Data | [RAWG API](https://rawg.io/apidocs) |
+| Extra Technology | Socket.IO (real-time updates) |
 
-## How to Run
+## Routes
 
-1. Open a terminal.
-2. Navigate to the `server` folder.
-3. Run `npm install`.
-4. Run `npm start`.
-5. Open your browser and go to `http://localhost:3000`.
+- `/#/` — Home page (browse games)
+- `/#/game/:id` — Game detail page
+- `/#/reviews` — All community reviews
+- `/#/stats` — Statistics dashboard
+- `/#/favourites` — Favourite games
+- `/#/login` — Login page
+- `/#/signup` — Sign up page
+
+## Project Structure
+
+```
+game-review-board/
+├── data/
+│   └── games.db                    SQLite database
+├── public/
+│   ├── index.html                  Main SPA entry point
+│   ├── css/style.css               Global styles
+│   └── js/
+│       ├── main.js                 Vue app setup
+│       ├── router.js               Vue Router config
+│       └── components/
+│           ├── NavBar.js           Shared navigation bar
+│           ├── HomePage.js         Game browsing and search
+│           ├── GamePage.js         Game detail and reviews
+│           ├── AllReviewsPage.js   Community reviews
+│           ├── StatsPage.js        D3.js statistics dashboard
+│           ├── FavouritesPage.js   Favourite games management
+│           ├── LoginPage.js        User login
+│           └── SignUpPage.js       User registration
+├── scripts/
+│   └── rawg.py                     RAWG API data import script
+├── server/
+│   └── server.js                   Express server with API routes
+├── group_members.html
+├── README.md
+└── package.json
+```
 
 ## Project Notes
 
-* The frontend was refactored into a single page application using Vue Router.
-* Navigation is handled dynamically through routed Vue components.
-* A shared NavBar component is used across the application.
-* SQLite3 is used as the local database to store game, review, and favourite data.
-* D3.js is used to generate charts and support data visualization on the statistics page.
-* The `rawg.py` script was updated to import additional game information, including images and other metadata.
-* Adult games were manually reviewed and removed from the dataset where identified.
-* The application includes a working favourites system for saving and removing games.
-
-## Pages
-
-* **Home Page**: browse and search for games
-* **Game Detail Page**: view game information, reviews, and add or remove favourites
-* **All Reviews Page**: see reviews from all users
-* **Statistics Dashboard**: view charts for release years, monthly trends, and rating distribution
-* **Favourites Page**: view and manage saved favourite games
+- The frontend is a single page application built with Vue 3 and Vue Router
+- SQLite3 stores game data, reviews, and favourites
+- D3.js generates SVG charts on the statistics page
+- Socket.IO provides real-time updates for reviews
+- The RAWG API data import script fetches game metadata including images and ratings
+- Adult content was manually reviewed and removed from the dataset
